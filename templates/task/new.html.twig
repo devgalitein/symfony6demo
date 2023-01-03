@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello TaskController!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+    <h1>Task</h1>
+    
+    {% for flash_error in app.flashes('success') %}
+        <div class="alert alert-success" role="alert">{{ flash_error }}</div>
+    {% endfor %}
+
+    {{ form_start(form, {'attr': {'novalidate': 'novalidate'}}) }}
+        <div class="form-control">
+            {{ form_label(form.task) }}
+            {{ form_widget(form.task) }}
+
+            <small>{{ form_help(form.task) }}</small>
+
+            <div class="form-error">
+                {{ form_errors(form.task) }}
+            </div>
+        </div>
+        
+        <div class="form-control">
+            {{ form_label(form.description) }}
+            {{ form_widget(form.description) }}
+
+            <small>{{ form_help(form.description) }}</small>
+
+            <div class="form-error">
+                {{ form_errors(form.description) }}
+            </div>
+        </div>
+
+        <div class="form-control">
+            <i class="fa fa-calendar"></i> {{ form_label(form.dueDate) }}
+            {{ form_widget(form.dueDate) }}
+
+            <small>{{ form_help(form.dueDate) }}</small>
+
+            <div class="form-error">
+                {{ form_errors(form.dueDate) }}
+            </div>
+        </div>
+        
+        <div class="form-control">
+            {{ form_widget(form.save) }}
+        </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}

@@ -1,0 +1,7 @@
+framework:
+    mailer:
+        dsn: '%env(MAILER_DSN)%'
+        envelope:
+            sender: 'dev.galitein@gmail.com'
+        headers:
+            From: 'DEV.Galitein <dev.galitein@gmail.com>'
