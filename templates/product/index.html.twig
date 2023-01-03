@@ -1,0 +1,256 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Products{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    
+</style>
+
+<div class="example-wrapper">
+    <h1 align="center">Product List</h1>
+    
+    <button type="button" class="btn btn-primary" id="btn_add_product">Add Product</button>
+    
+    <table id='empTable' width='100%'  class="table table-stripped">
+        <thead>
+            <tr>
+                <td>ID</td>
+                <td>Name</td>
+                <td>Price</td>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <td>Action</td>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    
+    
+    <!-- Modal -->
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel">Add Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="frm_add">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" name="name" id="name" placeholder="Enter name">
+                        <span class="errors error-name"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" name="description" id="description" rows="3"></textarea>
+                        <span class="errors error-description"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Price</label>
+                        <input type="number" class="form-control" name="price" id="price" placeholder="Enter price">
+                        <span class="errors error-price"></span>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="btn_save" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateModalLabel">Update Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="frm_update">
+                <input type="hidden" class="form-control" name="edit_id" id="edit_id" >
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" name="name" id="u_name" placeholder="Enter name">
+                        <span class="errors error-name"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" name="description" id="u_description" rows="3"></textarea>
+                        <span class="errors error-description"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="price" class="form-label">Price</label>
+                        <input type="number" class="form-control" name="price" id="u_price" placeholder="Enter price">
+                        <span class="errors error-price"></span>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="btn_update" class="btn btn-primary">Update</button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+    
+      <!-- Script -->
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            // DataTable
+            
+            {% if is_granted('ROLE_ADMIN') %}
+                let columns = [
+                    { data: 'id',name:'id' },
+                    { data: 'name',name:'name' },
+                    { data: 'price',name:'price' },
+                    { data: 'action',searchable:false,orderable:false },
+                ];
+            {% else %}
+                let columns = [
+                        { data: 'id',name:'id' },
+                        { data: 'name',name:'name' },
+                        { data: 'price',name:'price' },
+                    ];
+            {% endif %}
+
+            var table = $('#empTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    "url": "{{ path('get_products_list_datatables')}}",
+                    "type": "POST"
+                },
+                paging : true,
+                info : true, 
+                searching : true,
+                columns: columns,
+            });
+            
+            $("#btn_add_product").on('click',function(){
+                $("#addModal").modal('show');  
+                $("#frm_add")[0].reset(); 
+            });
+            
+             $("#btn_save").on('click',function(){
+                
+                $("#frm_add .errors").text('');
+                var action_url = "{{ path('add_edit_product') }}";
+                
+                var formData = new FormData($("#frm_add")[0]);
+                $.ajax({
+                    url:action_url,
+                    data:formData,
+                    contentType:false,
+                    processData:false,
+                    dataType:'JSON',
+                    type:"POST",
+                    success:function(response){
+                        if(response.success == 1) {
+                            $("#addModal").modal('hide');   
+                            table.ajax.reload();  
+                        }
+                        
+                        if(response.errors) {
+                            $.each(response.errors,function(field_name,error_message){
+                               $("#frm_add .error-"+field_name).html(error_message);
+                            });
+                        }
+                    },
+                    error:function(){
+                        
+                    }
+                });
+            });
+            
+            $("#btn_update").on('click',function(){
+                $("#frm_update .errors").text('');
+                
+                var action_url = "{{ path('add_edit_product') }}";
+                
+                var formData = new FormData($("#frm_update")[0]);
+                $.ajax({
+                    url:action_url,
+                    data:formData,
+                    contentType:false,
+                    processData:false,
+                    dataType:'JSON',
+                    type:"POST",
+                    success:function(response){
+                        if(response.success == 1) {
+                            $("#updateModal").modal('hide');   
+                            table.ajax.reload();  
+                        }
+                        
+                        if(response.errors) {
+                            $.each(response.errors,function(field_name,error_message){
+                               $("#frm_update .error-"+field_name).html(error_message);
+                            });
+                        }
+                    },
+                    error:function(){
+                        
+                    }
+                });
+            });
+            
+            $(document).on('click','.action_edit',function(){
+                var id = $(this).data('id');
+                
+                var edit_url = "{{ path('edit_product',{'id':':id'}) }}";
+                    edit_url = edit_url.replace(':id',id);
+                $.ajax({
+                    url:edit_url,
+                    dataType:'JSON',
+                    _method:"GET",
+                    success:function(response){
+                        if(response.success == 1) {
+                            $("#frm_update")[0].reset();
+                            
+                            $("#updateModal").modal('show');  
+                            $("#edit_id").val(response.data.id);
+                            $("#u_name").val(response.data.name);
+                            $("#u_description").text(response.data.description);
+                            $("#u_price").val(response.data.price);
+                        }
+                    },
+                    error:function(){
+                        
+                    }
+                });
+            });
+            
+            $(document).on('click','.action_delete',function(){
+                var id = $(this).data('id');
+                
+                if(confirm('Are you sure want to delete?')) {
+                    var delete_url = "{{ path('delete_product',{'id':':id'}) }}";
+                        delete_url = delete_url.replace(':id',id);
+                    $.ajax({
+                        url:delete_url,
+                        dataType:'JSON',
+                        _method:"DELETE",
+                        success:function(response){
+                            if(response.success == 1) {
+                                table.ajax.reload();
+                            }
+                        },
+                        error:function(){
+                            
+                        }
+                    });
+                }
+            });
+
+        });
+    </script>
+</div>
+{% endblock %}
