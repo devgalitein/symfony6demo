@@ -27,6 +27,21 @@ class Task
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $dueDate = null;
 
+    #[ORM\ManyToOne(inversedBy: 'Task')]
+    private ?TaskCategory $TaskCategory = null;
+
+    public function getCategory(): ?TaskCategory
+    {
+        return $this->TaskCategory;
+    }
+
+    public function setCategory(?TaskCategory $taskCategory): self
+    {
+        $this->TaskCategory = $taskCategory;
+
+        return $this;
+    }
+
     public function getId(): ?int
     {
         return $this->id;

@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\TaskType;
 use App\Entity\Task;
+use App\Entity\TaskCategory;
 
 class TaskController extends AbstractController
 {
@@ -25,15 +26,22 @@ class TaskController extends AbstractController
         $task = new Task();
 
         $form = $this->createForm(TaskType::class, $task);
+        
+        // $task_category = $this->entityManager->getRepository(TaskCategory::class)->find(3);
+        // dd($task_category->getTasks()->toArray());
+        
+        // $taskData = $this->entityManager->getRepository(Task::class)->find(15);
+        // dd($taskData->getCategory()->getName());
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            // $form->getData() holds the submitted values
-            // but, the original `$task` variable has also been updated
+
+            // $task_category = $this->entityManager->getRepository(TaskCategory::class)->find(3);
             $taskdata = $form->getData();
             
             $task->setTask($task->getTask());
             $task->setDueDate($task->getDueDate());
+            // $task->setCategory($task_category);
             
             $this->entityManager->persist($task);
             $this->entityManager->flush();
