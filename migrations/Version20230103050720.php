@@ -20,16 +20,16 @@ final class Version20230103050720 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE task (id INT AUTO_INCREMENT NOT NULL, task VARCHAR(255) NOT NULL, due_date DATETIME NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('ALTER TABLE login_history CHANGE status status SMALLINT NOT NULL');
-        $this->addSql('ALTER TABLE product CHANGE price price NUMERIC(12, 2) DEFAULT \'0\'');
+        $this->addSql('CREATE TABLE task_category (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL, task_category_id INTEGER(20) DEFAULT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE task (id INT AUTO_INCREMENT NOT NULL, task VARCHAR(255) NOT NULL, description LONGTEXT NOT NULL, due_date DATETIME NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('ALTER TABLE task ADD CONSTRAINT FK_527EDB25543330D0 FOREIGN KEY (task_category_id) REFERENCES task_category (id)');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
+        $this->addSql('ALTER TABLE task DROP FOREIGN KEY FK_527EDB25543330D0');
         $this->addSql('DROP TABLE task');
-        $this->addSql('ALTER TABLE login_history CHANGE status status SMALLINT DEFAULT 0 NOT NULL COMMENT \'0 - active, 1 - inactive\'');
-        $this->addSql('ALTER TABLE product CHANGE price price NUMERIC(12, 2) DEFAULT \'0.00\'');
+        $this->addSql('DROP TABLE task_category');
     }
 }
