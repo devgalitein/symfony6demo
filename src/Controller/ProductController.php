@@ -13,7 +13,6 @@ use App\Service\ProductValidator;
 use Symfony\Component\Messenger\MessageBusInterface;
 use App\Message\SmsNotification;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
-use Symfony\Component\Filesystem\Filesystem;
 
 class ProductController extends AbstractController
 {
@@ -143,9 +142,8 @@ class ProductController extends AbstractController
         if ($product_image) {
 
             if($id != null) {
-                $fileSystem = new Filesystem();
                 $product_image_dir = $this->getParameter('product_image_dir');
-                $fileSystem->remove($product_image_dir.'/'.$product->getProductImage());
+                @unlink($product_image_dir.'/'.$product->getProductImage());
             }
             
             $originalFilename = pathinfo($product_image->getClientOriginalName(), PATHINFO_FILENAME);
