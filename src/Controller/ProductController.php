@@ -69,12 +69,14 @@ class ProductController extends AbstractController
             $name = $record->getName();
             $description = $record->getDescription();
             $price = $record->getPrice();
+            $created_at = $record->getCreatedAt()->format('Y-m-d H:i:s');
 
             $tmp_data_arr = array(
                 "id" => $id,
                 "name" => $name,
                 "description" => $description,
                 "price" => $price,
+                "created_at" => $created_at,
             );
             
             if($this->isGranted('ROLE_ADMIN')) {

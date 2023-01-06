@@ -20,6 +20,7 @@
                 <td>ID</td>
                 <td>Name</td>
                 <td>Price</td>
+                <td>Created At</td>
                 {% if is_granted('ROLE_ADMIN') %}
                     <td>Action</td>
                 {% endif %}
@@ -112,6 +113,7 @@
                     { data: 'id',name:'id' },
                     { data: 'name',name:'name' },
                     { data: 'price',name:'price' },
+                    { data: 'created_at',name:'created_at' },
                     { data: 'action',searchable:false,orderable:false },
                 ];
             {% else %}
@@ -119,6 +121,7 @@
                         { data: 'id',name:'id' },
                         { data: 'name',name:'name' },
                         { data: 'price',name:'price' },
+                        { data: 'created_at',name:'created_at' },
                     ];
             {% endif %}
 
