@@ -4,10 +4,16 @@ namespace App\Entity;
 
 use App\Repository\ProductRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
+#[Gedmo\SoftDeleteable(fieldName: "deletedAt", timeAware: false, hardDelete: true)]
 class Product
 {
+    use TimestampableEntity,SoftDeleteableEntity;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -19,14 +25,9 @@ class Product
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
     
-    #[ORM\Column(type: "datetime", nullable: true)]
-    private $createdAt;
-    
     #[ORM\Column(name: "price", type: "decimal", precision: 12, scale: 2, nullable: true, options: ["default" => 0.00])]
     private $price;
 
-    #[ORM\Column(name: "updated_at", type: "datetime", nullable: true)]
-    private $updatedAt;
 
     public function getId(): ?int
     {
@@ -68,31 +69,17 @@ class Product
 
         return $this;
     }
-    
-    public function getCreatedAt()
+
+    public function getDeletedAt()
     {
-        return $this->createdAt;
+        return $this->deletedAt;
     }
-    
-    public function setCreatedAt(\DateTime $createdAt): self
+
+    public function setDeletedAt($deletedAt)
     {
-        if ($createdAt == null) {
-            $createdAt = new \DateTime();
-        }
-        $this->createdAt = $createdAt;
+        $this->deletedAt = $deletedAt;
 
         return $this;
     }
 
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
 }

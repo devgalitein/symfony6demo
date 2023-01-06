@@ -15,8 +15,6 @@ class ProductFixtures extends Fixture
             $product->setName('product '.$i);
             $product->setDescription('description '.$i);
             $product->setPrice(mt_rand(10, 100));
-            $product->setCreatedAt(new \DateTime());
-            $product->setUpdatedAt(new \DateTime());
             $manager->persist($product);
         }
 
