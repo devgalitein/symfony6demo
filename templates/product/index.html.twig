@@ -21,6 +21,7 @@
                 <td>Name</td>
                 <td>Price</td>
                 <td>Created At</td>
+                <td>Product Image</td>
                 {% if is_granted('ROLE_ADMIN') %}
                     <td>Action</td>
                 {% endif %}
@@ -54,6 +55,11 @@
                         <label for="price" class="form-label">Price</label>
                         <input type="number" class="form-control" name="price" id="price" placeholder="Enter price">
                         <span class="errors error-price"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="product_image" class="form-label">Image</label>
+                        <input type="file" class="form-control" name="product_image" id="product_image">
+                        <span class="errors error-productimage"></span>
                     </div>
                 </div>
                 
@@ -91,6 +97,11 @@
                         <input type="number" class="form-control" name="price" id="u_price" placeholder="Enter price">
                         <span class="errors error-price"></span>
                     </div>
+                    <div class="mb-3">
+                        <label for="u_product_image" class="form-label">Image</label>
+                        <input type="file" class="form-control" name="product_image" id="u_product_image">
+                        <span class="errors error-productimage"></span>
+                    </div>
                 </div>
                 
                 <div class="modal-footer">
@@ -114,6 +125,7 @@
                     { data: 'name',name:'name' },
                     { data: 'price',name:'price' },
                     { data: 'created_at',name:'created_at' },
+                    { data: 'product_image',name:'product_image' },
                     { data: 'action',searchable:false,orderable:false },
                 ];
             {% else %}
@@ -122,6 +134,7 @@
                         { data: 'name',name:'name' },
                         { data: 'price',name:'price' },
                         { data: 'created_at',name:'created_at' },
+                        { data: 'product_image',name:'product_image' },
                     ];
             {% endif %}
 

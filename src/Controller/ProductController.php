@@ -13,6 +13,7 @@ use App\Service\ProductValidator;
 use Symfony\Component\Messenger\MessageBusInterface;
 use App\Message\SmsNotification;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
+use Symfony\Component\Filesystem\Filesystem;
 
 class ProductController extends AbstractController
 {
@@ -69,13 +70,18 @@ class ProductController extends AbstractController
             $name = $record->getName();
             $description = $record->getDescription();
             $price = $record->getPrice();
+            $product_image = $record->getProductImage();
             $created_at = $record->getCreatedAt()->format('Y-m-d H:i:s');
+
+            $product_image = '/uploads/product_images/'. $product_image;
+            $product_image ='<img src="'.$product_image.'" height="50px" width="50px"/>';
 
             $tmp_data_arr = array(
                 "id" => $id,
                 "name" => $name,
                 "description" => $description,
                 "price" => $price,
+                "product_image" =>  $product_image,
                 "created_at" => $created_at,
             );
             
@@ -106,10 +112,13 @@ class ProductController extends AbstractController
         
         $id = $request->request->get('edit_id') ?? null;
         
+        $product_image = $request->files->get('product_image');
+
         $requestParams['edit_id'] = $id;
         $requestParams['name'] = $request->request->get('name');
         $requestParams['description'] = $request->request->get('description');
         $requestParams['price'] = $request->request->get('price');
+        $requestParams['product_image'] = $product_image;
         
         if($id != null) {
             $product = $this->entityManager->getRepository(Product::class)->find($id);
@@ -130,6 +139,34 @@ class ProductController extends AbstractController
         $product->setName($requestParams['name']);
         $product->setDescription($requestParams['description']);
         $product->setPrice($requestParams['price']);
+
+        if ($product_image) {
+
+            if($id != null) {
+                $fileSystem = new Filesystem();
+                $product_image_dir = $this->getParameter('product_image_dir');
+                $fileSystem->remove($product_image_dir.'/'.$product->getProductImage());
+            }
+            
+            $originalFilename = pathinfo($product_image->getClientOriginalName(), PATHINFO_FILENAME);
+            // this is needed to safely include the file name as part of the URL
+            // $safeFilename = $slugger->slug($originalFilename);
+            $newFilename = $originalFilename.'-'.uniqid().'.'.$product_image->guessExtension();
+
+            // Move the file to the directory where brochures are stored
+            try {
+                $product_image->move(
+                    $this->getParameter('product_image_dir'),
+                    $newFilename
+                );
+            } catch (FileException $e) {
+                // ... handle exception if something happens during file upload
+            }
+
+            // updates the 'brochureFilename' property to store the PDF file name
+            // instead of its contents
+            $product->setProductImage($newFilename);
+        }
         
         $this->entityManager->persist($product);
         $this->entityManager->flush();

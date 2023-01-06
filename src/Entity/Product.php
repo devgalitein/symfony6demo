@@ -28,6 +28,8 @@ class Product
     #[ORM\Column(name: "price", type: "decimal", precision: 12, scale: 2, nullable: true, options: ["default" => 0.00])]
     private $price;
 
+    #[ORM\Column(name: "product_image",type: 'string',nullable: true)]
+    private ?string $productImage = null;
 
     public function getId(): ?int
     {
@@ -66,6 +68,18 @@ class Product
     public function setPrice(?string $price): self
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    public function getProductImage()
+    {
+        return $this->productImage;
+    }
+
+    public function setProductImage($productImage)
+    {
+        $this->productImage = $productImage;
 
         return $this;
     }
