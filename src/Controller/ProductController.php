@@ -14,6 +14,11 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use App\Message\SmsNotification;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
 
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use App\EventListener\ProductAddListener;
+use Symfony\Contracts\EventDispatcher\Event;
+use App\Events\ProductEvent;
+
 class ProductController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
@@ -177,6 +182,11 @@ class ProductController extends AbstractController
                 // wait 5 seconds before processing
                 new DelayStamp(5000),
             ]);
+
+            $listener = new ProductAddListener();
+            $dispatcher = new EventDispatcher();
+            $dispatcher->addListener('product.event', [$listener, 'onProductEvent']);
+            $dispatcher->dispatch(new ProductEvent($product), ProductEvent::NAME);
 
             $return = ['success'=>1,'msg'=>'Product Created'];
         }
