@@ -1,0 +1,252 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Users{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { padding:20px ;width: 95%; margin:20px;  }
+    
+</style>
+
+<div class="example-wrapper">
+    <h1 align="center">Users List</h1>
+    
+    <button type="button" class="btn btn-primary" id="btn_add_user">Add User</button>
+    
+    <table id='empTable' width='100%'  class="table table-stripped">
+        <thead>
+            <tr>
+                <td>ID</td>
+                <td>Username</td>
+                <td>Email</td>
+                <td>City</td>
+                <td>State</td>
+                <td>Country</td>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <td>Action</td>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    
+    
+    <!-- Modal -->
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel">Add User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="frm_add">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" name="username" id="username" placeholder="Enter name">
+                        <span class="errors error-username"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="text" class="form-control" name="email" id="email" placeholder="Enter email">
+                        <span class="errors error-email"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" name="password" id="password" placeholder="Enter password">
+                        <span class="errors error-password"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="country" class="form-label">Country</label>
+                        <select name="country" id="country" class="form-control">
+                            <option value="">--Select Country--</option>
+                            {% for country in country_list %}
+                                <option value="{{ country.id }}">{{ country.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="errors error-country"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="state" class="form-label">State</label>
+                        <select name="state" id="state" class="form-control">
+                            <option value="">--Select State--</option>
+                        </select>
+                        <span class="errors error-country"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="city" class="form-label">City</label>
+                        <select name="city" id="city" class="form-control">
+                            <option value="">--Select City--</option>
+                        </select>
+                        <span class="errors error-city"></span>
+                    </div>
+                    
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="btn_save" class="btn btn-primary">Save changes</button>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+    
+      <!-- Script -->
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            // DataTable
+            
+            {% if is_granted('ROLE_ADMIN') %}
+                let columns = [
+                    { data: 'id',name:'id' },
+                    { data: 'username',name:'username' },
+                    { data: 'email',name:'email' },
+                    { data: 'city',name:'city' },
+                    { data: 'state',name:'state' },
+                    { data: 'country',name:'country' },
+                    { data: 'action',searchable:false,orderable:false },
+                ];
+            {% else %}
+                let columns = [
+                        { data: 'id',name:'id' },
+                        { data: 'username',name:'username' },
+                        { data: 'email',name:'email' },
+                        { data: 'city',name:'city' },
+                        { data: 'state',name:'state' },
+                        { data: 'country',name:'country' },
+                    ];
+            {% endif %}
+
+            var table = $('#empTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    "url": "{{ path('get_users_list_datatables')}}",
+                    "type": "POST"
+                },
+                paging : true,
+                info : true, 
+                searching : true,
+                columns: columns,
+            });
+            
+            $("#btn_add_user").on('click',function(){
+                $("#addModal").modal('show');  
+                $("#frm_add")[0].reset(); 
+            });
+            
+            $("#btn_save").on('click',function(){
+                
+                $("#frm_add .errors").text('');
+                var action_url = "{{ path('add_edit_user') }}";
+                
+                var formData = new FormData($("#frm_add")[0]);
+                $.ajax({
+                    url:action_url,
+                    data:formData,
+                    contentType:false,
+                    processData:false,
+                    dataType:'JSON',
+                    type:"POST",
+                    success:function(response){
+                        if(response.success == 1) {
+                            $("#addModal").modal('hide');   
+                            table.ajax.reload();  
+                        }
+                        
+                        if(response.errors) {
+                            $.each(response.errors,function(field_name,error_message){
+                               $("#frm_add .error-"+field_name).html(error_message);
+                            });
+                        }
+                    },
+                    error:function(){
+                        
+                    }
+                });
+            });
+            
+            $(document).on('click','.action_delete',function(){
+                var id = $(this).data('id');
+                
+                if(confirm('Are you sure want to delete?')) {
+                    var delete_url = "{{ path('delete_user',{'id':':id'}) }}";
+                        delete_url = delete_url.replace(':id',id);
+                    $.ajax({
+                        url:delete_url,
+                        dataType:'JSON',
+                        _method:"DELETE",
+                        success:function(response){
+                            if(response.success == 1) {
+                                table.ajax.reload();
+                            }
+                        },
+                        error:function(){
+                            
+                        }
+                    });
+                }
+            });
+            
+            $('#country').change(function () {
+                var country = $(this);
+                
+                // Request the neighborhoods of the selected city.
+                $.ajax({
+                    url: "{{ path('get_state_of_country') }}",
+                    type: "GET",
+                    dataType: "JSON",
+                    data: {
+                        country_id: country.val()
+                    },
+                    success: function (response) {
+                        var stateSelect = $("#state");
+                        // Remove current options
+                        stateSelect.html('');
+                        // Empty value ...
+                        stateSelect.append('<option value>--Select State--</option>');
+                        
+                        $.each(response.results, function (key, state) {
+                            stateSelect.append('<option value="' + state.id + '">' + state.name + '</option>');
+                        });
+                    },
+                    error: function (err) {
+                        alert("An error ocurred while loading data ...");
+                    }
+                });
+            });
+            
+            $('#state').change(function () {
+                var state = $(this);
+                $.ajax({
+                    url: "{{ path('get_city_of_state') }}",
+                    type: "GET",
+                    dataType: "JSON",
+                    data: {
+                        state_id: state.val()
+                    },
+                    success: function (response) {
+                        var citySelect = $("#city");
+                        // Remove current options
+                        citySelect.html('');
+                        // Empty value ...
+                        citySelect.append('<option value>--Select City--</option>');
+                        
+                        $.each(response.results, function (key, city) {
+                            citySelect.append('<option value="' + city.id + '">' + city.name + '</option>');
+                        });
+                    },
+                    error: function (err) {
+                        alert("An error ocurred while loading data ...");
+                    }
+                });
+            });
+
+        });
+    </script>
+</div>
+{% endblock %}

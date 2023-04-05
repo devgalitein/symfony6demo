@@ -34,6 +34,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
+    
+    #[ORM\ManyToOne(inversedBy: Country::class)]
+    #[ORM\JoinColumn(nullable: true,onDelete:"CASCADE")]
+    private ?Country $country = null;
+    
+    #[ORM\ManyToOne(inversedBy: State::class)]
+    #[ORM\JoinColumn(nullable: true,onDelete:"CASCADE")]
+    private ?State $state = null;
+    
+    #[ORM\ManyToOne(inversedBy: City::class)]
+    #[ORM\JoinColumn(nullable: true,onDelete:"CASCADE")]
+    private ?City $city = null;
 
     public function getId(): ?int
     {
@@ -103,6 +115,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): self
     {
         $this->password = $password;
+
+        return $this;
+    }
+    
+    public function getCountry(): ?Country
+    {
+        return $this->country;
+    }
+
+    public function setCountry(?Country $country): self
+    {
+        $this->country = $country;
+
+        return $this;
+    }
+    
+    public function getState(): ?State
+    {
+        return $this->state;
+    }
+
+    public function setState(?State $state): self
+    {
+        $this->state = $state;
+
+        return $this;
+    }
+    
+    public function getCity(): ?City
+    {
+        return $this->city;
+    }
+
+    public function setCity(?City $city): self
+    {
+        $this->city = $city;
 
         return $this;
     }
