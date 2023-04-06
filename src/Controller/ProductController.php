@@ -18,6 +18,10 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use App\EventListener\ProductAddListener;
 use Symfony\Contracts\EventDispatcher\Event;
 use App\Events\ProductEvent;
+use App\Entity\Size;
+use App\Entity\Colors;
+use App\Entity\ProductVariation;
+use App\Form\ProductFormType;
 
 class ProductController extends AbstractController
 {
@@ -40,6 +44,58 @@ class ProductController extends AbstractController
             'products' => $products,
         ]);
     }
+    
+    #[Route('/product/new', name: 'app_product_new')]
+    public function new(Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $product = new Product();
+
+        $form = $this->createForm(ProductFormType::class, $product);
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+            
+            $product->setName('name');
+            $product->setDescription('description');
+            $product->setPrice(0);
+            
+            $this->entityManager->persist($product);
+            $this->entityManager->flush();
+            
+            return $this->redirectToRoute('app_product_new');
+        }
+
+        return $this->render('product/new.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+    
+    #[Route('/product/edit/{id}', name: 'app_product_edit')]
+    public function edit(Product $product, Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $form = $this->createForm(ProductFormType::class, $product);
+        $form->handleRequest($request);
+        
+        if ($form->isSubmitted() && $form->isValid()) {
+            
+            $product->setName('name1');
+            $product->setDescription('description1');
+            $product->setPrice(0);
+            
+            $this->entityManager->persist($product);
+            $this->entityManager->flush();
+            
+            return $this->redirectToRoute('app_product_edit', ['id' => $product->getId()]);
+        }
+
+        return $this->render('product/edit.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+    
     
     #[Route('/get_products', name: 'get_products_list_datatables')]
     public function getProducts(Request $request){

@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Work {% endblock %}
+
+{% block body %}
+
+{{ form_start(form) }}
+    {{ form_row(form.description) }}
+    <h3>Tags</h3>
+    <ul class="tags"
+        data-index="{{ form.work_tags|length > 0 ? form.work_tags|last.vars.name + 1 : 0 }}"
+        data-prototype="{{ form_widget(form.work_tags.vars.prototype)|e('html_attr') }}"
+    >
+        <button type="button" class="add_item_link" data-collection-holder-class="tags">Add a tag</button>
+        {% for tag in form.work_tags %}
+            <li>{{ form_row(tag.name) }}</li>
+        {% endfor %}
+    </ul>
+    <input type="submit" />
+{{ form_end(form) }}
+
+<script>
+    
+    const addFormToCollection = (e) => {
+        const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
+        const item = document.createElement('li');
+        item.innerHTML = collectionHolder
+            .dataset
+            .prototype
+            .replace(
+            /__name__/g,
+            collectionHolder.dataset.index
+            );
+
+        collectionHolder.appendChild(item);
+        collectionHolder.dataset.index++;
+        addTagFormDeleteLink(item);
+    };
+        
+    document
+    .querySelectorAll('.add_item_link')
+    .forEach(btn => {
+        btn.addEventListener("click", addFormToCollection)
+    });
+    
+    const addTagFormDeleteLink = (item) => {
+        const removeFormButton = document.createElement('button');
+        removeFormButton.innerText = 'Delete this tag';
+        item.append(removeFormButton);
+        removeFormButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            item.remove();
+        });
+    }
+
+</script>
+{% endblock %}

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ProductRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
@@ -10,6 +12,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[Gedmo\SoftDeleteable(fieldName: "deletedAt", timeAware: false, hardDelete: true)]
+
 class Product
 {
     use TimestampableEntity,SoftDeleteableEntity;
@@ -31,6 +34,14 @@ class Product
     #[ORM\Column(name: "product_image",type: 'string',nullable: true)]
     private ?string $productImage = null;
 
+    #[ORM\OneToMany(mappedBy: 'product', targetEntity: ProductVariation::class,cascade:['persist'])]
+    private Collection $productVariations;
+    
+    public function __construct()
+    {
+        $this->productVariations = new ArrayCollection();
+    }
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -92,6 +103,36 @@ class Product
     public function setDeletedAt($deletedAt)
     {
         $this->deletedAt = $deletedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ProductVariation>
+     */
+    public function getProductVariations(): Collection
+    {
+        return $this->productVariations;
+    }
+
+    public function addProductVariation(ProductVariation $productVariation): self
+    {
+        if (!$this->productVariations->contains($productVariation)) {
+            $this->productVariations->add($productVariation);
+            $productVariation->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductVariation(ProductVariation $productVariation): self
+    {
+        if ($this->productVariations->removeElement($productVariation)) {
+            // set the owning side to null (unless already changed)
+            if ($productVariation->getProduct() === $this) {
+                $productVariation->setProduct(null);
+            }
+        }
 
         return $this;
     }
