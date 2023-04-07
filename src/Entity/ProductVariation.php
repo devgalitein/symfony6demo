@@ -14,15 +14,15 @@ class ProductVariation
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'productVariations')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true,onDelete:"CASCADE")]
     private ?Product $product = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true,onDelete:"CASCADE")]
     private ?Colors $color = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true,onDelete:"CASCADE")]
     private ?Size $size = null;
 
     public function getId(): ?int

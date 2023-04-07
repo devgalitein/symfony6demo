@@ -1,0 +1,9 @@
+<ul class="product_variations"
+    data-index="{{ form.product_variations|length > 0 ? form.product_variations|last.vars.name + 1 : 0 }}"
+    data-prototype="{{ form_widget(form.product_variations.vars.prototype)|e('html_attr') }}"
+>
+    <button type="button" class="add_item_link btn btn-info" data-collection-holder-class="product_variations">Add Variation</button>
+    {% for product_variation in form.product_variations %}
+        <li>{{ form_row(product_variation) }}</li>
+    {% endfor %}
+</ul>

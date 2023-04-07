@@ -17,13 +17,7 @@ class ProductFormType extends AbstractType
             'entry_type' => ProductVariantType::class,
             'entry_options' => ['label' => false],
             'allow_add' => true,
-            'allow_delete' => true,
-            'by_reference' => false,
-        ]);
-        $builder->add('product_variations', CollectionType::class, [
-            'entry_type' => ProductVariantType::class,
-            'entry_options' => ['label' => false],
-            'allow_add' => true,
+            'label' => false,
             'allow_delete' => true,
             'by_reference' => false,
         ]);

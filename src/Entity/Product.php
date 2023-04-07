@@ -34,7 +34,7 @@ class Product
     #[ORM\Column(name: "product_image",type: 'string',nullable: true)]
     private ?string $productImage = null;
 
-    #[ORM\OneToMany(mappedBy: 'product', targetEntity: ProductVariation::class,cascade:['persist'])]
+    #[ORM\OneToMany(mappedBy: 'product', targetEntity: ProductVariation::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $productVariations;
     
     public function __construct()

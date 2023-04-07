@@ -22,6 +22,8 @@ use App\Entity\Size;
 use App\Entity\Colors;
 use App\Entity\ProductVariation;
 use App\Form\ProductFormType;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 class ProductController extends AbstractController
 {
@@ -39,9 +41,14 @@ class ProductController extends AbstractController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $products = $this->entityManager->getRepository(Product::class)->findAll();
+        
+        $product = new Product();
+        $form = $this->createForm(ProductFormType::class, $product);
+        
         return $this->render('product/index.html.twig', [
             'controller_name' => 'ProductController',
             'products' => $products,
+            'form' => $form->createView(),
         ]);
     }
     
@@ -190,6 +197,9 @@ class ProductController extends AbstractController
             $product = new Product();
         }
         
+        $form = $this->createForm(ProductFormType::class, $product);
+        $form->handleRequest($request);
+
         $errorMessages = $this->productValidator->validateData($requestParams);
         if ($errorMessages) {
             $return = ['errors'=> $errorMessages];
@@ -269,10 +279,20 @@ class ProductController extends AbstractController
         
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         
+        $product_variation = [];
+        
+        $form = $this->createForm(ProductFormType::class, $product);
+        $form->handleRequest($request);
+        
+        $product_variations = $this->render('product/product_variations.html.twig', [
+            'form' => $form->createView(),
+        ])->getContent();
+
         $data['id'] = $product->getId();
         $data['name'] = $product->getName();
         $data['description'] = $product->getDescription();
         $data['price'] = $product->getPrice();
+        $data['product_variations'] = $product_variations;
         
         $return = ['success'=>1,'msg'=>'Data Found','data' => $data];
         

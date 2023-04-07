@@ -52,6 +52,12 @@
             item.remove();
         });
     }
+    
+    document
+    .querySelectorAll('ul.product_variations li')
+    .forEach((tag) => {
+        addTagFormDeleteLink(tag)
+    });
 
 </script>
 {% endblock %}
