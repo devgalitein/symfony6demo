@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello PersonController!{% endblock %}
+
+{% block body %}
+
+{% if person is defined and person.id != null %}
+ <h1>Person updation ({{ person.name}})</h1>
+{% else %}
+ <h1>Person creation</h1>
+{% endif %}
+
+{{ form_start(form) }}
+    {{ form_widget(form) }}
+    <input type="submit" value="{{ (person is defined and person.id != null) ?'Update':'Create' }}" />
+{{ form_end(form) }}
+
+<ul>
+    <li>
+        <a href="{{ path('app_person') }}">Back to the list</a>
+    </li>
+</ul>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script>
+        $(document).on('change','#person_form_city',function () {
+            var citySelector = $(this);
+            // Request the neighborhoods of the selected city.
+            $.ajax({
+                url: "{{ path('person_list_neighborhoods') }}",
+                type: "GET",
+                dataType: "JSON",
+                data: {
+                    cityid: citySelector.val()
+                },
+                success: function (neighborhoods) {
+                    var neighborhoodSelect = $("#person_form_neighborhood");
+                    // Remove current options
+                    neighborhoodSelect.html('');
+                    // Empty value ...
+                    neighborhoodSelect.append('<option value> Select a neighborhood of ' + citySelector.find("option:selected").text() + ' ...</option>');
+                    $.each(neighborhoods, function (key, neighborhood) {
+                        neighborhoodSelect.append('<option value="' + neighborhood.id + '">' + neighborhood.name + '</option>');
+                    });
+                },
+                error: function (err) {
+                    alert("An error ocurred while loading data ...");
+                }
+            });
+        });
+    </script>
+{% endblock %}

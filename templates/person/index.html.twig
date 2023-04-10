@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello PersonController!{% endblock %}
+
+{% block body %}
+
+<div class="row">
+    <div class="col-sm-12">
+        <h1>Person ({{ persons.getTotalItemCount }})</h1>
+        <a href="{{ url('app_person_new') }}" class="btn btn-primary">Add New</a>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Last name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for person in persons %}
+                <tr>
+                    <td>{{ person.getName()}}</td>
+                    <td>{{ person.getLastName()}}</td>
+                    <td>
+                        <a href="{{ url('app_person_edit',{'id':person.getId()} ) }}" class="btn btn-warning btn-sm">Edit</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {{ knp_pagination_render(persons) }}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+    
+{% endblock %}

@@ -10,6 +10,7 @@ use App\Entity\Product;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Service\ProductValidator;
+use App\Service\EmailService;
 use Symfony\Component\Messenger\MessageBusInterface;
 use App\Message\SmsNotification;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
@@ -25,14 +26,21 @@ use App\Form\ProductFormType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
+
 class ProductController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
     private ProductValidator $productValidator;
-    public function __construct(EntityManagerInterface $entityManager,ProductValidator $productValidator)
+    private EmailService $emailService;
+    public function __construct(EntityManagerInterface $entityManager,ProductValidator $productValidator,EmailService $emailService)
     {
         $this->entityManager = $entityManager;
         $this->productValidator = $productValidator;
+        $this->emailService = $emailService;
     }
 
     
@@ -252,8 +260,22 @@ class ProductController extends AbstractController
             $listener = new ProductAddListener();
             $dispatcher = new EventDispatcher();
             $dispatcher->addListener('product.event', [$listener, 'onProductEvent']);
-            $dispatcher->dispatch(new ProductEvent($product), ProductEvent::NAME);
-
+            $dispatcher->dispatch(new ProductEvent($product), ProductEvent::NAME);           
+            
+            $to_email = '';
+            $subject = 'New Product Created: '.$product->getName();
+            $template_path = 'emails/product_added.html.twig';
+            
+            $parameter_array['name'] = $product->getName();
+            $parameter_array['description'] = $product->getDescription();
+            $parameter_array['price'] = $product->getPrice();
+            
+            try {
+                $this->emailService->sendTemplatedEmail($to_email,$subject,$template_path,$parameter_array);
+            } catch (Exception $exception) {
+    
+            }
+            
             $return = ['success'=>1,'msg'=>'Product Created'];
         }
         
