@@ -14,12 +14,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Knp\Component\Pager\PaginatorInterface;
 
-#[Route(
-    path: '/{_locale}',
-    requirements: [
-        '_locale' => 'en|fr|de',
-    ],
-)]
 class PersonController extends AbstractController
 {
     private $em;

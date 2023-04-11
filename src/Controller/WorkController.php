@@ -14,12 +14,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
-#[Route(
-    path: '/{_locale}',
-    requirements: [
-        '_locale' => 'en|fr|de',
-    ],
-)]
 class WorkController extends AbstractController
 {
     private EntityManagerInterface $entityManager;

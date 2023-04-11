@@ -6,12 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route(
-    path: '/{_locale}',
-    requirements: [
-        '_locale' => 'en|fr|de',
-    ],
-)]
 class DashboardController extends AbstractController
 {
     #[Route('/dashboard', name: 'app_dashboard')]

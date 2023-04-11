@@ -26,26 +26,24 @@
     </head>
     <body>
         <form method="post">
-        {% if app.user %}
-            <div class="mb-3">
-                You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
-            </div>
-             <div class="mb-3">
-                <a href="{{ path('app_dashboard') }}">Dashboard</a> ||
-                <a href="{{ path('app_product') }}">Product</a> ||
-                <a href="{{ path('app_user') }}">Users</a> ||
-                <a href="{{ path('app_person') }}">Person</a> ||
-                <a href="{{ path('app_task') }}">Task</a>
-            </div>
-        {% endif %}
-        
-        <div class="mb-3">
-            <strong>Language: </strong>
-            <a class="btn btn-info mr-1" href="{{ path(app.request.get('_route'), {_locale: 'en'}) }}">English</a>
-            <a class="btn btn-info mr-1" href="{{ path(app.request.get('_route'), {_locale: 'fr'}) }}">French</a>
-            <a class="btn btn-info mr-1" href="{{ path(app.request.get('_route'), {_locale: 'de'}) }}">German</a>         
-        </div>
-    
+            {% if app.user %}
+                <div class="mb-3">
+                    You are logged in as {{ app.user.userIdentifier }}, <a href="{{ path('app_logout') }}">Logout</a>
+                </div>
+                <div class="mb-3">
+                    <a href="{{ path('app_dashboard') }}">Dashboard</a> ||
+                    <a href="{{ path('app_product') }}">Product</a> ||
+                    <a href="{{ path('app_user') }}">Users</a> ||
+                    <a href="{{ path('app_person') }}">Person</a> ||
+                    <a href="{{ path('app_task') }}">Task</a>
+                </div>
+                <div class="mb-3">
+                    <strong>Language: </strong>
+                    <a class="btn btn-info mr-1" href="{{ path(app.request.get('_route'), {_locale: 'en'}) }}">English</a>
+                    <a class="btn btn-info mr-1" href="{{ path(app.request.get('_route'), {_locale: 'fr'}) }}">French</a>
+                    <a class="btn btn-info mr-1" href="{{ path(app.request.get('_route'), {_locale: 'de'}) }}">German</a>         
+                </div>
+            {% endif %}
         </form>
         {% block body %}{% endblock %}
         

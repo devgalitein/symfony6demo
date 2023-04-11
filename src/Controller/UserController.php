@@ -18,12 +18,6 @@ use App\Message\SmsNotification;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-#[Route(
-    path: '/{_locale}',
-    requirements: [
-        '_locale' => 'en|fr|de',
-    ],
-)]
 class UserController extends AbstractController
 {
     private EntityManagerInterface $entityManager;

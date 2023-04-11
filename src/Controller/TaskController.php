@@ -12,12 +12,6 @@ use App\Form\TaskType;
 use App\Entity\Task;
 use App\Entity\TaskCategory;
 
-#[Route(
-    path: '/{_locale}',
-    requirements: [
-        '_locale' => 'en|fr|de',
-    ],
-)]
 class TaskController extends AbstractController
 {
     private EntityManagerInterface $entityManager;
