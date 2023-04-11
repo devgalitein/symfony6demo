@@ -1,1 +1,6 @@
-product_list: Product List france
+product_list: Liste de produits
+add_product: Ajouter un produit
+update_product: Mettre à jour le produit
+person: Personne
+person_creation: Création de personne
+person_updation: mise à jour de la personne

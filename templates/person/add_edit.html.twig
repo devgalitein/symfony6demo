@@ -5,9 +5,9 @@
 {% block body %}
 
 {% if person is defined and person.id != null %}
- <h1>Person updation ({{ person.name}})</h1>
+ <h1>{{ 'person_updation'|trans}} ({{ person.name}})</h1>
 {% else %}
- <h1>Person creation</h1>
+ <h1>{{ 'person_creation'|trans}}</h1>
 {% endif %}
 
 {{ form_start(form) }}

@@ -1,1 +1,6 @@
 product_list: Product List
+add_product: Add Product
+update_product: Update Product
+person: Person
+person_creation: Person creation
+person_updation: Person updation

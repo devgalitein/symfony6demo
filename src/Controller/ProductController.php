@@ -31,6 +31,12 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 
+#[Route(
+    path: '/{_locale}',
+    requirements: [
+        '_locale' => 'en|fr|de',
+    ],
+)]
 class ProductController extends AbstractController
 {
     private EntityManagerInterface $entityManager;

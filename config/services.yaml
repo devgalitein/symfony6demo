@@ -6,6 +6,7 @@
 parameters:
     product_image_dir: '%kernel.project_dir%/public/uploads/product_images'
     smtp_user_email: 'dev.galitein@gmail.com'
+    locale: 'en'
 services:
     # default configuration for services in *this* file
     _defaults:

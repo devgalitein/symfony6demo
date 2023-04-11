@@ -12,7 +12,7 @@
 <div class="example-wrapper">
     <h1 align="center">{{ 'product_list'|trans }}</h1>
     
-    <button type="button" class="btn btn-primary" id="btn_add_product">Add Product</button>
+    <button type="button" class="btn btn-primary" id="btn_add_product">{{ 'add_product'|trans }}</button>
     
     <table id='empTable' width='100%'  class="table table-stripped">
         <thead>
@@ -36,7 +36,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addModalLabel">Add Product</h5>
+                <h5 class="modal-title" id="addModalLabel">{{ 'add_product'|trans }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             {{ form_start(form, {'attr': {'id': 'frm_add'}}) }}
@@ -78,7 +78,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="updateModalLabel">Update Product</h5>
+                <h5 class="modal-title" id="updateModalLabel">{{ 'update_product'|trans }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="frm_update">
