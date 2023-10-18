@@ -20,14 +20,12 @@ final class Version20230407101001 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE product CHANGE price price NUMERIC(12, 2) DEFAULT \'0\'');
         $this->addSql('ALTER TABLE product_variation CHANGE product_id product_id INT NOT NULL');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE product CHANGE price price NUMERIC(12, 2) DEFAULT \'0.00\'');
         $this->addSql('ALTER TABLE product_variation CHANGE product_id product_id INT DEFAULT NULL');
     }
 }

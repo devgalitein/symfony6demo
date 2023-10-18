@@ -24,7 +24,6 @@ final class Version20230407101123 extends AbstractMigration
         $this->addSql('ALTER TABLE product_variation DROP FOREIGN KEY FK_C3B85677ADA1FB5');
         $this->addSql('ALTER TABLE product_variation DROP FOREIGN KEY FK_C3B85674584665A');
         $this->addSql('ALTER TABLE product_variation DROP FOREIGN KEY FK_C3B8567498DA827');
-        $this->addSql('ALTER TABLE product_variation CHANGE product_id product_id INT NOT NULL');
         $this->addSql('ALTER TABLE product_variation ADD CONSTRAINT FK_C3B85677ADA1FB5 FOREIGN KEY (color_id) REFERENCES colors (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE product_variation ADD CONSTRAINT FK_C3B85674584665A FOREIGN KEY (product_id) REFERENCES product (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE product_variation ADD CONSTRAINT FK_C3B8567498DA827 FOREIGN KEY (size_id) REFERENCES size (id) ON DELETE CASCADE');
@@ -37,7 +36,6 @@ final class Version20230407101123 extends AbstractMigration
         $this->addSql('ALTER TABLE product_variation DROP FOREIGN KEY FK_C3B85674584665A');
         $this->addSql('ALTER TABLE product_variation DROP FOREIGN KEY FK_C3B85677ADA1FB5');
         $this->addSql('ALTER TABLE product_variation DROP FOREIGN KEY FK_C3B8567498DA827');
-        $this->addSql('ALTER TABLE product_variation CHANGE product_id product_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE product_variation ADD CONSTRAINT FK_C3B85674584665A FOREIGN KEY (product_id) REFERENCES product (id)');
         $this->addSql('ALTER TABLE product_variation ADD CONSTRAINT FK_C3B85677ADA1FB5 FOREIGN KEY (color_id) REFERENCES colors (id)');
         $this->addSql('ALTER TABLE product_variation ADD CONSTRAINT FK_C3B8567498DA827 FOREIGN KEY (size_id) REFERENCES size (id)');

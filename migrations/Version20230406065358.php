@@ -25,7 +25,6 @@ final class Version20230406065358 extends AbstractMigration
         $this->addSql('CREATE TABLE work_tag (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('ALTER TABLE work_work_tag ADD CONSTRAINT FK_AC526A43BB3453DB FOREIGN KEY (work_id) REFERENCES work (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE work_work_tag ADD CONSTRAINT FK_AC526A43112BA533 FOREIGN KEY (work_tag_id) REFERENCES work_tag (id) ON DELETE CASCADE');
-        $this->addSql('ALTER TABLE product CHANGE price price NUMERIC(12, 2) DEFAULT \'0\'');
     }
 
     public function down(Schema $schema): void
@@ -36,6 +35,5 @@ final class Version20230406065358 extends AbstractMigration
         $this->addSql('DROP TABLE work');
         $this->addSql('DROP TABLE work_work_tag');
         $this->addSql('DROP TABLE work_tag');
-        $this->addSql('ALTER TABLE product CHANGE price price NUMERIC(12, 2) DEFAULT \'0.00\'');
     }
 }

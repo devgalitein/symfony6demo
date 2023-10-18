@@ -25,7 +25,6 @@ final class Version20230410053816 extends AbstractMigration
         $this->addSql('ALTER TABLE neighborhood ADD CONSTRAINT FK_FEF1E9EE8BAC62AF FOREIGN KEY (city_id) REFERENCES city (id)');
         $this->addSql('ALTER TABLE person ADD CONSTRAINT FK_34DCD1768BAC62AF FOREIGN KEY (city_id) REFERENCES city (id)');
         $this->addSql('ALTER TABLE person ADD CONSTRAINT FK_34DCD176803BB24B FOREIGN KEY (neighborhood_id) REFERENCES neighborhood (id)');
-        $this->addSql('ALTER TABLE product CHANGE price price NUMERIC(12, 2) DEFAULT \'0\'');
     }
 
     public function down(Schema $schema): void
@@ -36,6 +35,5 @@ final class Version20230410053816 extends AbstractMigration
         $this->addSql('ALTER TABLE person DROP FOREIGN KEY FK_34DCD176803BB24B');
         $this->addSql('DROP TABLE neighborhood');
         $this->addSql('DROP TABLE person');
-        $this->addSql('ALTER TABLE product CHANGE price price NUMERIC(12, 2) DEFAULT \'0.00\'');
     }
 }
