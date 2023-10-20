@@ -35,7 +35,8 @@
                     <a href="{{ path('app_product') }}">Product</a> ||
                     <a href="{{ path('app_user') }}">Users</a> ||
                     <a href="{{ path('app_person') }}">Person</a> ||
-                    <a href="{{ path('app_task') }}">Task</a>
+                    <a href="{{ path('app_task') }}">Task</a> ||
+                    <a href="{{ path('websocket') }}">Websocket</a>
                 </div>
                 <div class="mb-3">
                     <strong>Language: </strong>
@@ -46,6 +47,7 @@
             {% endif %}
         </form>
         {% block body %}{% endblock %}
+        {% block javascript %}{% endblock %}
         
         
     </body>
