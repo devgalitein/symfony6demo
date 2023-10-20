@@ -15,6 +15,13 @@ use Symfony\Component\Security\Core\Security;
 class StartWebSocketServerCommand extends Command {
 
     protected static $defaultName = 'app:start-websocket-server';
+    private EntityManagerInterface $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        parent::__construct();
+        $this->entityManager = $entityManager;
+    }
 
     protected function configure() {
         $this->setDescription('Start the WebSocket server');
@@ -26,7 +33,7 @@ class StartWebSocketServerCommand extends Command {
         $server = IoServer::factory(
             new HttpServer(
                 new WsServer(
-                    new ChatServer()
+                    new ChatServer($this->entityManager)
                 )
             ),
             $port
