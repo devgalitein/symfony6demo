@@ -41,7 +41,7 @@ class ChatServer implements MessageComponentInterface {
         $logger = new Logger('websocket');
         try {
             $data = json_decode($msg, true);
-            if ($data && $data['type'] === 'typing') {
+            if (isset($data['type']) && $data['type'] === 'typing') {
                 $userId = $data['user_id'];
                 $user_name = $data['name'];
                 // Broadcast the typing event to other connected users
@@ -58,7 +58,7 @@ class ChatServer implements MessageComponentInterface {
                         ]));
                     }
                 }
-            } else if($data) {
+            } else {
                 // Parse and process the message data
                 $userId = $data['user_id'];
                 $message = $data['message'];
