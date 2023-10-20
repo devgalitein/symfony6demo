@@ -8,11 +8,13 @@ use Monolog\Logger;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 use SplObjectStorage;
+use Symfony\Component\Security\Core\Security;
 
 class ChatServer implements MessageComponentInterface {
 
     protected $connections;
     private EntityManagerInterface $entityManager;
+    protected $clients = [];
 
     public function __construct(EntityManagerInterface $entityManager)
     {
@@ -23,11 +25,32 @@ class ChatServer implements MessageComponentInterface {
     public function onOpen(ConnectionInterface $conn)
     {
         $this->connections->attach($conn);
+
+        $queryString = $conn->httpRequest->getUri()->getQuery();
+        parse_str($queryString, $queryParams);
+        $userId = isset($queryParams['user_id']) ? $queryParams['user_id'] : null;
+
+        if ($userId) {
+            $user = $this->entityManager->getRepository(User::class)->find($userId);
+
+            // Add the connected client to the list of online users
+            $this->clients[$conn->resourceId] = [
+                'connection' => $conn,
+                'user_id' => $userId,  // Replace with the user's actual ID
+                'username' => $user->getUsername(),  // Replace with the user's actual username
+            ];
+            // Broadcast the updated list of online users
+            $this->broadcastOnlineUsers();
+        }
     }
 
     public function onClose(ConnectionInterface $conn)
     {
         $this->connections->detach($conn);
+        // Remove the disconnected client from the list of online users
+        unset($this->clients[$conn->resourceId]);
+        // Broadcast the updated list of online users
+        $this->broadcastOnlineUsers();
     }
 
     public function onError(ConnectionInterface $conn, \Exception $e)
@@ -86,6 +109,25 @@ class ChatServer implements MessageComponentInterface {
                 continue;
             }
             $connection->send($msg);
+        }
+    }
+
+    protected function broadcastOnlineUsers()
+    {
+        // Extract the list of online users
+        $onlineUsers = [];
+        foreach ($this->clients as $client) {
+            $onlineUsers[] = [
+                'user_id' => $client['user_id'],
+                'username' => $client['username'],
+            ];
+        }
+        // Broadcast the list of online users to all clients
+        foreach ($this->clients as $client) {
+            $client['connection']->send(json_encode([
+                'type' => 'onlineUsers',
+                'data' => $onlineUsers,
+            ]));
         }
     }
 
