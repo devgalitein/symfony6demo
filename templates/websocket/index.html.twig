@@ -49,6 +49,7 @@
     <div>
         <div class="form-group">
             <label for="message">Message:</label> <input type="text" id="message">
+            <span id="user_typing"></span>
         </div>
         <button type="button" id="sendBtn">Send</button>
     </div>
@@ -79,14 +80,36 @@
         try
         {
             const message = JSON.parse(e.data);
-            addMessage(message.name, message.message);
+             if (message.type && message.type === 'typing') {
+                if (message.status === 'started') {
+                    // Display a "User is typing..." message
+                    displayTypingMessage(message);
+                    console.log('displayTypingMessage',message);
+                } else if (message.status === 'stopped') {
+                    // Remove the typing message
+                    removeTypingMessage(message);
+                    console.log('removeTypingMessage',message);
+                }
+             } else {
+                addMessage(message.name, message.message);
+             }
         }
         catch(e)
         {
             // Catch any errors
         }
     });
+        
+    function displayTypingMessage(message) {
+        $("#user_typing").text(message.name+' is typing...');
+        setTimeout(function() {
+            $("#user_typing").text('');
+        },1000);
+    }
 
+    function removeTypingMessage(message) {
+        $("#user_typing").text('');
+    }
 
     document.getElementById("sendBtn").addEventListener("click", function() {
 
@@ -100,6 +123,34 @@
             socket.send(JSON.stringify(message));
             document.getElementById("message").value ='';
             addMessage(message.name, message.message);
+        }
+    });
+
+    // Detect when the user starts typing
+    document.getElementById("message").addEventListener('keydown', function(event) {
+        if (event.key !== 'Enter') {
+            // Send a WebSocket event to notify other users
+             const message_data = {
+                name: login_user,
+                user_id: login_user_id,
+                type: 'typing',
+                status: 'started'
+            };
+            socket.send(JSON.stringify(message_data));
+        }
+    });
+
+    // Detect when the user stops typing (e.g., after a delay or when the input field is empty)
+    document.getElementById("message").addEventListener('keyup', function(event) {
+        if (event.key === 'Enter' || event.target.value === '') {
+            // Send a WebSocket event to notify other users
+            const message_data = {
+                name: login_user,
+                user_id: login_user_id,
+                type: 'typing',
+                status: 'stopped'
+            };
+            socket.send(JSON.stringify(message_data));
         }
     });
 

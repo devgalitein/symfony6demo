@@ -41,7 +41,24 @@ class ChatServer implements MessageComponentInterface {
         $logger = new Logger('websocket');
         try {
             $data = json_decode($msg, true);
-            if ($data) {
+            if ($data && $data['type'] === 'typing') {
+                $userId = $data['user_id'];
+                $user_name = $data['name'];
+                // Broadcast the typing event to other connected users
+                foreach($this->connections as $connection)
+                {
+                    if($connection !== $from)
+                    {
+                        $connection->send(json_encode([
+                            'type' => 'typing',
+                            'resourceId' => $from->resourceId,
+                            'user_id' => $userId,
+                            'user_name' => $user_name,
+                            'status' => $data['status'],
+                        ]));
+                    }
+                }
+            } else if($data) {
                 // Parse and process the message data
                 $userId = $data['user_id'];
                 $message = $data['message'];
