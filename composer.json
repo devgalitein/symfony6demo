@@ -12,6 +12,7 @@
         "doctrine/doctrine-bundle": "^2.7",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.14",
+        "easycorp/easyadmin-bundle": "^4.8",
         "friendsofsymfony/rest-bundle": "^3.4",
         "gedmo/doctrine-extensions": "^3.10",
         "jms/serializer-bundle": "^5.0",
